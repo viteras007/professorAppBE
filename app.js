@@ -141,7 +141,7 @@ app.post("/auth/login", async (req,res) => {
 
 const questionRoutes = require("./routes/questionRoutes");
 
-app.use("/question", questionRoutes);
+app.use("/question", checkToken ,questionRoutes);
 
 // Credencials
 const dbUser = process.env.DB_USER;
