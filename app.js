@@ -3,11 +3,13 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const cors = require("cors");
 
 const app = express();
 
 // Config JSON response
 app.use(express.json());
+app.use(cors());
 
 // Models
 const User = require("./Models/User");
@@ -41,7 +43,7 @@ app.get('/user/:id', checkToken, async (req, res) => {
   const id = req.params.id;
 
   const user = await User.findById(id, '-password');
-  
+
   if (!user) {
     return res.status(404).json({ message: "Usuário não encontrado!" });
   }
@@ -96,7 +98,7 @@ app.post("/auth/register", async (req, res) => {
 });
 
 // Login User
-app.post("/auth/login", async (req,res) => {
+app.post("/auth/login", async (req, res) => {
   const { email, password } = req.body;
 
   // validations
@@ -126,9 +128,9 @@ app.post("/auth/login", async (req,res) => {
 
     const token = jwt.sign(
       {
-      id: user._id,
-    }, 
-    secret,    
+        id: user._id,
+      },
+      secret,
     );
 
     res.status(200).json({ msg: 'Autenticação realizada com sucesso!', token });
@@ -141,7 +143,7 @@ app.post("/auth/login", async (req,res) => {
 
 const questionRoutes = require("./routes/questionRoutes");
 
-app.use("/question", checkToken ,questionRoutes);
+app.use("/question", checkToken, questionRoutes);
 
 // Credencials
 const dbUser = process.env.DB_USER;
